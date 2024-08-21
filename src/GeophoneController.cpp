@@ -1,6 +1,6 @@
 #include "GeophoneController.h"
 #include "Particle.h"
-#include "WhiteNoiseSimulatedSensor.h"
+#include "GeophoneSensor.h"
 #include "DataPoint.h"
 
 GeophoneController::GeophoneController(const String& manufacturer, const String& deviceId)
@@ -27,7 +27,7 @@ void GeophoneController::loop() {
 }
 
 void GeophoneController::getSensorData() {
-    WhiteNoiseSimulatedSensor sensor;
+    GeophoneSensor sensor;
     DataPoint dataPoint = sensor.getDataPoint();
     accumulatedData.push_back(dataPoint);
 }
