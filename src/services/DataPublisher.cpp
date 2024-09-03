@@ -1,13 +1,49 @@
-#include "Particle.h"
 #include "DataPublisher.h"
+#include "MQTT-TLS.h"
+#include <cstdint>
+
+void callback(char* topic, byte* payload, unsigned int length);
+
+#define LET_ENCRYPT_CA_PEM                                              \
+"-----BEGIN CERTIFICATE----- \r\n"                                      \
+"MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh\r\n"  \
+"MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\r\n"  \
+"d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD\r\n"  \
+"QTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVT\r\n"  \
+"MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j\r\n"  \
+"b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG\r\n"  \
+"9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsB\r\n"  \
+"CSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97\r\n"  \
+"nh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt\r\n"  \
+"43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7P\r\n"  \
+"T19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4\r\n"  \
+"gdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAO\r\n"  \
+"BgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbR\r\n"  \
+"TLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUw\r\n"  \
+"DQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/Esr\r\n"  \
+"hMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg\r\n"  \
+"06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJF\r\n"  \
+"PnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0ls\r\n"  \
+"YSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQk\r\n"  \
+"CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=\r\n"  \
+"-----END CERTIFICATE----- "
+const char letencryptCaPem[] = LET_ENCRYPT_CA_PEM;
+
+MQTT client("g00d6906.ala.us-east-1.emqxsl.com", 8883, callback);
+
+void callback(char* topic, byte* payload, unsigned int length) {}
 
 DataPublisher::DataPublisher(const String& manufacturer, const String& deviceId)
-    : manufacturer(manufacturer), deviceId(deviceId) {}
+    : manufacturer(manufacturer), deviceId(deviceId) {
+    client.enableTls(letencryptCaPem, sizeof(letencryptCaPem));
+    client.connect(deviceId.c_str());
+}
 
 void DataPublisher::publish(std::vector<DataPoint> accumulatedData) {
-    // TODO: Make this more efficient by batching data points into a single Particle.publish call
-    for (const auto& dataPoint : accumulatedData) {
-        String lineProtocolString = String::format("geophoneData,manufacturer=%s,deviceId=%s value=%f %lld\n", manufacturer.c_str(), deviceId.c_str(), dataPoint.data, dataPoint.timestamp);
-        Particle.publish("influx_data", lineProtocolString, PRIVATE);
+  if (client.isConnected()) {
+    for (auto dataPoint : accumulatedData) {
+      String topic = manufacturer + "/" + deviceId;
+      client.publish(topic.c_str(), std::to_string(dataPoint.data).c_str());
     }
+  }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Particle.h"
 #include "DataPoint.h"
 
 class DataPublisher {
