@@ -1,4 +1,3 @@
-#include "Particle.h"
 #include "DataPublisher.h"
 #include "MQTT.h"
 #include <cstdint>
@@ -11,8 +10,8 @@ void callback(char* topic, byte* payload, unsigned int length) {}
 
 DataPublisher::DataPublisher(const String& manufacturer, const String& deviceId)
     : manufacturer(manufacturer), deviceId(deviceId) {
-        client.connect(deviceId.c_str());
-    }
+    client.connect(deviceId.c_str(), "pigtracks-sensor", "abc123def456");
+}
 
 void DataPublisher::publish(std::vector<DataPoint> accumulatedData) {
     if (client.isConnected()) {
@@ -24,7 +23,6 @@ void DataPublisher::publish(std::vector<DataPoint> accumulatedData) {
             }
         }
         String topic = manufacturer + "/" + deviceId;
-        Particle.publish("DataPublisher::publish", "Data: " + String(dataStr.c_str()), PRIVATE);
         client.publish(topic.c_str(), dataStr.c_str());
     }
 }
