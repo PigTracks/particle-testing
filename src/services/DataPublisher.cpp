@@ -3,9 +3,11 @@
 #include "MQTT.h"
 #include <cstdint>
 
+void callback(char* topic, byte* payload, unsigned int length);
+
 MQTT client("r18135e0.ala.dedicated.aws.emqxcloud.com", 1883, callback);
 
-void callback(char* topic, byte* payload, unsigned int length);
+void callback(char* topic, byte* payload, unsigned int length) {}
 
 DataPublisher::DataPublisher(const String& manufacturer, const String& deviceId)
     : manufacturer(manufacturer), deviceId(deviceId) {
