@@ -1,0 +1,17 @@
+name: Continuous Integration
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Compile Firmware
+        id: compile
+        uses: particle-iot/compile-action@v1
+        with:
+          particle-platform-name: 'tracker'
+          v: 'p2'
