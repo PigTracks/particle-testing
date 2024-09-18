@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
-#include "DataPoint.h"
+#include <cstdint>
+#include "../models/DataPoint.h"
 
 class GeophoneSensor {
 public:

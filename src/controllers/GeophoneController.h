@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Particle.h"
-#include "DataPoint.h"
+#include "../models/DataPoint.h"
 
 class GeophoneController {
 public:
     GeophoneController(const String& manufacturer, const String& deviceId);
-    void setup();
     void loop();
 private:
     String manufacturer;

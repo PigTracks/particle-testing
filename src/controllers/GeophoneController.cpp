@@ -1,15 +1,11 @@
-#include "GeophoneController.h"
 #include "Particle.h"
-#include "sensors/GeophoneSensor.h"
-#include "services/DataPublisher.h"
-#include "DataPoint.h"
+#include "GeophoneController.h"
+#include "../sensors/GeophoneSensor.h"
+#include "../networking/DataPublisher.h"
+#include "../models/DataPoint.h"
 
 GeophoneController::GeophoneController(const String& manufacturer, const String& deviceId)
-    : manufacturer(manufacturer), deviceId(deviceId), geophoneStreamEnabled(false), lastDataGenerationTime(0), lastPublishTime(0) {}
-
-void GeophoneController::setup() {
-    Particle.function("geophoneControl", &GeophoneController::controlGeophoneStream, this);
-}
+    : manufacturer(manufacturer), deviceId(deviceId), geophoneStreamEnabled(true), lastDataGenerationTime(0), lastPublishTime(0) {}
 
 void GeophoneController::loop() {
     unsigned long currentTime = millis();
@@ -35,17 +31,6 @@ void GeophoneController::getSensorData() {
 
 void GeophoneController::publishData() {
     DataPublisher dataPublisher = DataPublisher(manufacturer, deviceId);
-    dataPublisher.publish(accumulatedData);
+    dataPublisher.publishData(accumulatedData);
     accumulatedData.clear();
-}
-
-int GeophoneController::controlGeophoneStream(String command) {
-    if (command == "on") {
-        geophoneStreamEnabled = true;
-        return 1;
-    } else if (command == "off") {
-        geophoneStreamEnabled = false;
-        return 1;
-    }
-    return -1;
 }

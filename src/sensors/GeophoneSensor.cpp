@@ -1,6 +1,5 @@
-#include "GeophoneSensor.h"
 #include "Particle.h"
-#include "DataPoint.h"
+#include "GeophoneSensor.h"
 
 DataPoint GeophoneSensor::getDataPoint() {
     unsigned long time = Time.now();

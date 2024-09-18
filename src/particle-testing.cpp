@@ -1,5 +1,6 @@
 #include "Particle.h"
-#include "GeophoneController.h"
+#include "controllers/GeophoneController.h"
+#include "controllers/MetadataController.h"
 
 PRODUCT_VERSION(1);
 
@@ -9,11 +10,12 @@ String manufacturer = "PigTracks";
 String deviceId = System.deviceID();
 
 GeophoneController geophoneController(manufacturer, deviceId);
+MetadataController metadataController(manufacturer, deviceId);
 
 void setup() {
-  geophoneController.setup();
 }
 
 void loop() {
+  metadataController.loop();
   geophoneController.loop();
 }
