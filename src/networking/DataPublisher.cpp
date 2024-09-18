@@ -2,6 +2,9 @@
 #include "Particle.h"
 #include "DataPublisher.h"
 
+DataPublisher::DataPublisher(const String& manufacturer, const String& deviceId)
+    : manufacturer(manufacturer), deviceId(deviceId) {}
+
 void DataPublisher::publishData(std::vector<DataPoint> accumulatedData) {
     String topic = manufacturer + "/" + deviceId + "/data";
     String messageBody = createDataJson(accumulatedData);
