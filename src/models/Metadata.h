@@ -15,10 +15,7 @@ struct CellSignal {
 
 struct Battery {
     float voltage;
-};
-
-struct Geophone {
-    bool enabled;
+    float percentage;
 };
 
 struct Metadata {
@@ -26,9 +23,7 @@ struct Metadata {
     Position position;
     CellSignal cellSignal;
     Battery battery;
-    Geophone geophone;
-    float temperature;
 
-    Metadata(int64_t timestamp, Position position, CellSignal cellSignal, Battery battery, Geophone geophone, float temperature)
-        : timestamp(timestamp), position(position), cellSignal(cellSignal), battery(battery), geophone(geophone), temperature(temperature) {}
+    Metadata(int64_t timestamp, Position position, CellSignal cellSignal, Battery battery)
+        : timestamp(timestamp), position(position), cellSignal(cellSignal), battery(battery) {}
 };

@@ -6,7 +6,7 @@ PRODUCT_VERSION(1);
 
 SerialLogHandler logHandler(LOG_LEVEL_INFO);
 
-String manufacturer = "PigTracks";
+String manufacturer = "pigtracks";
 String deviceId = System.deviceID();
 
 GeophoneController geophoneController(manufacturer, deviceId);

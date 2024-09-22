@@ -9,6 +9,7 @@ public:
 private:
     String manufacturer;
     String deviceId;
+    bool metadataStreamEnabled;
     unsigned long lastPublishTime;
     const unsigned long publishInterval = 30000;
 

@@ -3,20 +3,21 @@
 #include "../services/PositionService.h"
 #include "../services/CellSignalService.h"
 #include "../services/BatteryService.h"
-#include "../services/GeophoneService.h"
-#include "../services/TemperatureService.h"
 #include "../networking/DataPublisher.h"
 #include "../models/Metadata.h"
 
 MetadataController::MetadataController(const String& manufacturer, const String& deviceId)
-    : manufacturer(manufacturer), deviceId(deviceId) {}
+    : manufacturer(manufacturer), deviceId(deviceId), metadataStreamEnabled(false) {}
 
 void MetadataController::loop() {
     unsigned long currentTime = millis();
 
-    if (currentTime - lastPublishTime > publishInterval) {
-        publishMetadata(currentTime);
-        lastPublishTime = currentTime;
+    if (metadataStreamEnabled) {
+        if (currentTime - lastPublishTime > publishInterval) {
+            unsigned long time = Time.now();
+            publishMetadata(time);
+            lastPublishTime = currentTime;
+        }
     }
 }
 
@@ -30,13 +31,7 @@ void MetadataController::publishMetadata(unsigned long time) {
     BatteryService batteryService;
     Battery battery = batteryService.getBattery();
 
-    GeophoneService geophoneService;
-    Geophone geophone = geophoneService.getGeophone();
-
-    TemperatureService temperatureService;
-    float temperature = temperatureService.getTemperature();
-
-    Metadata metadata(time, position, cellSignal, battery, geophone, temperature);
+    Metadata metadata(time, position, cellSignal, battery);
 
     DataPublisher dataPublisher = DataPublisher(manufacturer, deviceId);
     dataPublisher.publishMetadata(metadata);
