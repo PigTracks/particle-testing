@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Particle.h"
-#include "DataPoint.h"
+#include "../models/DataPoint.h"
 
 class GeophoneController {
 public:
     GeophoneController(const String& manufacturer, const String& deviceId);
-    void setup();
     void loop();
 private:
     String manufacturer;
@@ -14,8 +13,8 @@ private:
     bool geophoneStreamEnabled;
     unsigned long lastDataGenerationTime;
     unsigned long lastPublishTime;
-    const unsigned long dataGenerationInterval = 500;
-    const unsigned long publishInterval = 5000;
+    const unsigned long dataGenerationInterval = 100;
+    const unsigned long publishInterval = 2500;
     std::vector<DataPoint> accumulatedData;
 
     void getSensorData();
