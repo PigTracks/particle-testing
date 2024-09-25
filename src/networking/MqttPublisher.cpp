@@ -10,8 +10,11 @@ void callback(char* topic, byte* payload, unsigned int length) {}
 
 void MqttPublisher::publish(const String& topic, const String& messageBody) {
     String deviceId = System.deviceID();
-    client.connect(deviceId.c_str(), "pigtracks-sensor", "abc123def456");
+    if (!client.isConnected()) {
+        client.connect(deviceId.c_str(), "pigtracks-sensor", "abc123def456");
+    }
     if (client.isConnected()) {
+        client.loop();
         client.publish(topic.c_str(), messageBody.c_str());
     }
 }
